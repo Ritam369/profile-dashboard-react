@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Camera, Upload, Loader } from "lucide-react";
 import { cloudinaryService } from "../services/cloudinaryService";
 
-const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false }) => {
+const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, defaultAvatarUrl }) => {
   const fileInputRef = useRef(null);
   const [dragOver, setDragOver] = useState(false);
 
@@ -45,15 +45,30 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false }) 
     fileInputRef.current?.click();
   };
 
+  // Helper to get initials from defaultAvatarUrl (if provided as UI Avatars) or fallback
+  const getInitials = () => {
+    if (defaultAvatarUrl && defaultAvatarUrl.includes('name=')) {
+      const match = decodeURIComponent(defaultAvatarUrl.split('name=')[1].split('&')[0] || '').split(' ');
+      return (match[0]?.[0] || '') + (match[1]?.[0] || '');
+    }
+    return '?';
+  };
+
   return (
     <div className="relative group">
       <div className="relative w-32 h-32">
-        {/* Profile Image */}
-        <img  crossOrigin="anonymous"
-          src={currentImage || 'https://via.placeholder.com/150x150/e2e8f0/64748b?text=No+Image'}
-          alt="Profile"
-          className="profile-image"
-        />
+        {/* Profile Image or Initials */}
+        {currentImage ? (
+          <img crossOrigin="anonymous"
+            src={currentImage}
+            alt="Profile"
+            className="profile-image"
+          />
+        ) : (
+          <div className="w-32 h-32 rounded-full bg-primary-500 flex items-center justify-center text-white text-4xl font-bold border-4 border-white shadow-lg select-none">
+            {getInitials()}
+          </div>
+        )}
         
         {/* Upload Overlay */}
         <div
