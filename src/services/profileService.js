@@ -2,7 +2,6 @@ import { authService } from './authService';
 import { cloudinaryService } from './cloudinaryService';
 
 export const profileService = {
-  // Get user profile
   async getProfile() {
     try {
       const token = localStorage.getItem('token');
@@ -17,7 +16,6 @@ export const profileService = {
     }
   },
 
-  // Update user profile
   async updateProfile(userId, profileData) {
     try {
       if (!userId || !profileData) {
@@ -31,17 +29,14 @@ export const profileService = {
     }
   },
 
-  // Upload profile image
   async uploadProfileImage(userId, imageFile) {
     try {
       if (!userId || !imageFile) {
         throw new Error('Invalid upload data');
       }
 
-      // Upload to Cloudinary
       const uploadResult = await cloudinaryService.uploadImage(imageFile);
       
-      // Update user profile with new image URL
       await authService.updateProfile(userId, {
         profileImage: uploadResult.secure_url
       });
@@ -56,12 +51,8 @@ export const profileService = {
     }
   },
 
-  // Delete user profile (placeholder for future implementation)
   async deleteProfile(userId) {
     try {
-      // In production, implement actual delete logic
-      // const response = await api.delete(`/users/${userId}`);
-      // return response.data;
       
       console.warn('Delete profile not implemented in demo mode');
       return { success: true, message: 'Profile deletion not available in demo' };

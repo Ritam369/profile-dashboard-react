@@ -13,7 +13,6 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
 
   const [errors, setErrors] = useState({});
 
-  // Initialize form with profile data
   useEffect(() => {
     if (profile) {
       setFormData({
@@ -34,7 +33,6 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
       [name]: value
     }));
     
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -91,7 +89,6 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* First Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <User className="w-4 h-4 inline mr-2" />
@@ -111,7 +108,6 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
               )}
             </div>
 
-            {/* Last Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <User className="w-4 h-4 inline mr-2" />
@@ -131,7 +127,6 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
               )}
             </div>
 
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <Mail className="w-4 h-4 inline mr-2" />
@@ -151,7 +146,6 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
               )}
             </div>
 
-            {/* Phone */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <Phone className="w-4 h-4 inline mr-2" />
@@ -171,7 +165,6 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
               )}
             </div>
 
-            {/* Location */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <MapPin className="w-4 h-4 inline mr-2" />
@@ -188,7 +181,6 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
               />
             </div>
 
-            {/* Bio */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <FileText className="w-4 h-4 inline mr-2" />
@@ -208,7 +200,6 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
               </p>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex space-x-3 pt-4">
               <button
                 type="submit"

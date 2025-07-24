@@ -8,7 +8,6 @@ export const useProfile = () => {
   const [error, setError] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  // Update profile
   const updateProfile = async (profileData) => {
     try {
       setLoading(true);
@@ -24,7 +23,6 @@ export const useProfile = () => {
     }
   };
 
-  // Upload profile image
   const uploadProfileImage = async (imageFile) => {
     try {
       setUploading(true);
@@ -40,7 +38,6 @@ export const useProfile = () => {
     }
   };
 
-  // Delete profile
   const deleteProfile = async () => {
     try {
       setError(null);

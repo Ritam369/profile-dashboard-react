@@ -31,7 +31,6 @@ const ProfileDashboard = ({ onBack }) => {
   const handleImageUpload = async (imageFile) => {
     try {
       await uploadProfileImage(imageFile);
-      // The useProfile hook will update the profile state and re-render the image automatically
     } catch (error) {
       console.error('Image upload failed:', error);
     }
@@ -111,7 +110,6 @@ const ProfileDashboard = ({ onBack }) => {
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Header */}
           <div className="mb-8">
             {onBack && (
               <button
@@ -132,10 +130,8 @@ const ProfileDashboard = ({ onBack }) => {
             </div>
           </div>
 
-          {/* Main Profile Card */}
           <div className="card mb-6">
             <div className="flex flex-col lg:flex-row lg:items-start lg:space-x-8">
-              {/* Profile Image Section */}
               <div className="flex flex-col items-center lg:items-start mb-6 lg:mb-0">
                 <ProfileImageUpload
                   currentImage={profile.profileImage}
@@ -149,7 +145,6 @@ const ProfileDashboard = ({ onBack }) => {
                 />
               </div>
 
-              {/* Profile Information */}
               <div className="flex-1">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
                   <div>
@@ -172,7 +167,6 @@ const ProfileDashboard = ({ onBack }) => {
                   </button>
                 </div>
 
-                {/* Contact Information */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                     <Mail className="w-5 h-5 text-primary-500" />
@@ -216,7 +210,6 @@ const ProfileDashboard = ({ onBack }) => {
             </div>
           </div>
 
-          {/* Account Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="card text-center">
               <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -247,7 +240,6 @@ const ProfileDashboard = ({ onBack }) => {
         </div>
       </div>
 
-      {/* Edit Form Modal */}
       {showEditForm && (
         <ProfileEditForm
           profile={profile}

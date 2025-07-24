@@ -18,7 +18,6 @@ const Login = ({ onToggleAuth }) => {
       [name]: value
     }));
     
-    // Clear errors when user starts typing
     if (formErrors[name]) {
       setFormErrors(prev => ({
         ...prev,
@@ -26,7 +25,6 @@ const Login = ({ onToggleAuth }) => {
       }));
     }
     if (error) {
-      // Clear auth error when user starts typing
       setTimeout(() => setError && setError(null), 100);
     }
   };
@@ -82,7 +80,6 @@ const Login = ({ onToggleAuth }) => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email Field */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               <Mail className="w-4 h-4 inline mr-2" />
@@ -102,7 +99,6 @@ const Login = ({ onToggleAuth }) => {
             )}
           </div>
 
-          {/* Password Field */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               <Lock className="w-4 h-4 inline mr-2" />
@@ -132,7 +128,6 @@ const Login = ({ onToggleAuth }) => {
             )}
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -152,7 +147,6 @@ const Login = ({ onToggleAuth }) => {
           </button>
         </form>
 
-        {/* Toggle to Register */}
         <div className="mt-6 text-center">
           <p className="text-gray-600">
             Don't have an account?{' '}

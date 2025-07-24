@@ -45,7 +45,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
     fileInputRef.current?.click();
   };
 
-  // Helper to get initials from defaultAvatarUrl (if provided as UI Avatars) or fallback
+  
   const getInitials = () => {
     if (defaultAvatarUrl && defaultAvatarUrl.includes('name=')) {
       const match = decodeURIComponent(defaultAvatarUrl.split('name=')[1].split('&')[0] || '').split(' ');
@@ -57,7 +57,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
   return (
     <div className="relative group">
       <div className="relative w-32 h-32">
-        {/* Profile Image or Initials */}
+        
         {currentImage ? (
           <img crossOrigin="anonymous"
             src={currentImage}
@@ -70,7 +70,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
           </div>
         )}
         
-        {/* Upload Overlay */}
+        
         <div
           className={`absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer ${dragOver ? 'opacity-100 bg-opacity-60' : ''}`}
           onClick={triggerFileInput}
@@ -89,7 +89,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
         </div>
       </div>
 
-      {/* Hidden File Input */}
+      
       <input
         ref={fileInputRef}
         type="file"
@@ -98,7 +98,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
         className="hidden"
       />
 
-      {/* Upload Button for Mobile/Accessibility */}
+      
       <button
         onClick={triggerFileInput}
         disabled={uploading}
@@ -108,7 +108,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
         <span>{uploading ? 'Uploading...' : 'Upload New Photo'}</span>
       </button>
 
-      {/* File Format Info */}
+      
       <p className="mt-2 text-xs text-gray-500">
         Supports JPG, PNG up to 5MB
       </p>

@@ -7,7 +7,6 @@ const Navbar = ({ onProfileClick }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -39,7 +38,6 @@ const Navbar = ({ onProfileClick }) => {
     <nav className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo/Brand */}
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <h1 className="text-xl font-bold text-primary-600">
@@ -48,22 +46,18 @@ const Navbar = ({ onProfileClick }) => {
             </div>
           </div>
 
-          {/* Right side - User menu */}
           <div className="flex items-center space-x-4">
-            {/* Welcome message */}
             <div className="hidden md:block">
               <span className="text-sm text-gray-700">
                 Welcome back, <span className="font-medium">{user?.firstName}</span>
               </span>
             </div>
 
-            {/* Profile dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               >
-                {/* Profile Avatar */}
                 <div className="relative">
                   {user?.profileImage ? (
                     <img
@@ -81,7 +75,6 @@ const Navbar = ({ onProfileClick }) => {
                   )}
                 </div>
 
-                {/* User name and dropdown icon */}
                 <div className="hidden sm:flex items-center space-x-1">
                   <span className="text-sm font-medium text-gray-700">
                     {user?.firstName} {user?.lastName}
@@ -94,10 +87,8 @@ const Navbar = ({ onProfileClick }) => {
                 </div>
               </button>
 
-              {/* Dropdown menu */}
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                  {/* User info header */}
                   <div className="px-4 py-3 border-b border-gray-100">
                     <div className="flex items-center space-x-3">
                       {user?.profileImage ? (
@@ -122,7 +113,6 @@ const Navbar = ({ onProfileClick }) => {
                     </div>
                   </div>
 
-                  {/* Menu items */}
                   <div className="py-1">
                     <button
                       onClick={handleProfileClick}
@@ -133,7 +123,6 @@ const Navbar = ({ onProfileClick }) => {
                     </button>
                   </div>
 
-                  {/* Logout */}
                   <div className="border-t border-gray-100 py-1">
                     <button
                       onClick={handleLogout}

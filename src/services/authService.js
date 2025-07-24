@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-// Configure base URL
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
-// Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -12,7 +10,6 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// Add auth token to requests
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -24,7 +21,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor for handling errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -36,9 +32,7 @@ api.interceptors.response.use(
   }
 );
 
-// Demo users removed. All operations now use backend API.
 
-// Utility functions
 const generateToken = (userId) => `demo_token_${userId}_${Date.now()}`;
 const sanitizeUser = (user) => {
   const { password, ...sanitizedUser } = user;
@@ -56,7 +50,6 @@ const handleApiError = (error) => {
 };
 
 export const authService = {
-  // Login user
   async login(email, password) {
     try {
       const response = await api.post('/auth/login', { email, password });
@@ -66,7 +59,6 @@ export const authService = {
     }
   },
 
-  // Register new user
   async register(userData) {
     try {
       const response = await api.post('/auth/register', userData);
@@ -76,7 +68,6 @@ export const authService = {
     }
   },
 
-  // Verify token and get user data
   async verifyToken(token) {
     try {
       const response = await api.get('/auth/verify', {
@@ -88,7 +79,6 @@ export const authService = {
     }
   },
 
-  // Update user profile
   async updateProfile(userId, updateData) {
     try {
       const response = await api.put(`/users/profile/${userId}`, updateData);
@@ -98,15 +88,11 @@ export const authService = {
     }
   },
 
-  // Logout
   async logout() {
     try {
-      // In production, you might want to invalidate the token on the server:
-      // await api.post('/auth/logout');
       
       return { message: 'Logout successful' };
     } catch (error) {
-      // Don't throw error for logout - always allow user to logout locally
       return { message: 'Logout successful' };
     }
   }

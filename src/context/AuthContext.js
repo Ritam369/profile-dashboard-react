@@ -16,12 +16,10 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Clear error when user interacts
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
-  // Initialize authentication on app start
   useEffect(() => {
     const initializeAuth = async () => {
       try {
@@ -42,7 +40,6 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
   }, []);
 
-  // Login function
   const login = useCallback(async (email, password) => {
     try {
       setError(null);
@@ -62,7 +59,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Register function
   const register = useCallback(async (userData) => {
     try {
       setError(null);
@@ -82,7 +78,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Logout function
   const logout = useCallback(async () => {
     try {
       await authService.logout();
@@ -95,7 +90,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Update user data
   const updateUser = useCallback((userData) => {
     setUser(prev => prev ? { ...prev, ...userData } : null);
   }, []);

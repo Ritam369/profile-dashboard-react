@@ -1,26 +1,19 @@
-// Cloudinary configuration
 const CLOUDINARY_CLOUD_NAME = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_UPLOAD_PRESET = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET;
 const CLOUDINARY_API_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
-// Image validation constants
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 
 export const cloudinaryService = {
-  // Upload image to Cloudinary
   async uploadImage(file) {
     try {
-      // Validate file
       this.validateImage(file);
 
-      // Check if Cloudinary is configured
       if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
         console.warn('Cloudinary not configured, using demo mode');
         return this.uploadImageDemo(file);
       }
 
-      // Real Cloudinary implementation
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
@@ -44,9 +37,7 @@ export const cloudinaryService = {
     }
   },
 
-  // Demo upload for development
   async uploadImageDemo(file) {
-    // Simulate upload delay
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     const imageUrl = URL.createObjectURL(file);
@@ -60,15 +51,11 @@ export const cloudinaryService = {
     };
   },
 
-  // Delete image from Cloudinary
   async deleteImage(publicId) {
     try {
       if (!CLOUDINARY_CLOUD_NAME) {
-        return { result: 'ok' }; // Demo mode
       }
 
-      // In production, this should be done on the backend
-      // as it requires the API secret which shouldn't be exposed
       const response = await fetch('/api/cloudinary/delete', {
         method: 'DELETE',
         headers: {
@@ -85,12 +72,10 @@ export const cloudinaryService = {
       return await response.json();
     } catch (error) {
       console.error('Image deletion error:', error);
-      // Don't throw error for deletion - it's not critical
       return { result: 'ok' };
     }
   },
 
-  // Generate optimized image URL
   generateOptimizedUrl(publicId, options = {}) {
     if (!CLOUDINARY_CLOUD_NAME || !publicId || publicId.startsWith('demo_')) {
       return null;
@@ -104,10 +89,8 @@ export const cloudinaryService = {
       format = 'auto'
     } = options;
 
-    return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/w_${width},h_${height},c_${crop},q_${quality},f_${format}/${publicId}`;
   },
 
-  // Validate image file
   validateImage(file) {
     if (!file) {
       throw new Error('No file selected');
@@ -124,7 +107,6 @@ export const cloudinaryService = {
     return true;
   },
 
-  // Check if Cloudinary is properly configured
   isConfigured() {
     return !!(CLOUDINARY_CLOUD_NAME && CLOUDINARY_UPLOAD_PRESET);
   }
