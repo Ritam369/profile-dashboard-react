@@ -36,35 +36,7 @@ api.interceptors.response.use(
   }
 );
 
-// Demo users for development (remove in production)
-const demoUsers = [
-  {
-    _id: '1',
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john@example.com',
-    password: 'password123',
-    profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-    phone: '+1 (555) 123-4567',
-    bio: 'Software developer passionate about creating amazing user experiences.',
-    location: 'San Francisco, CA',
-    joinDate: '2023-01-15T00:00:00Z',
-    isVerified: true,
-  },
-  {
-    _id: '2',
-    firstName: 'Jane',
-    lastName: 'Smith',
-    email: 'jane@example.com',
-    password: 'password123',
-    profileImage: 'https://images.unsplash.com/photo-1494790108755-2616b612b5bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-    phone: '+1 (555) 987-6543',
-    bio: 'UI/UX designer with a passion for user-centered design.',
-    location: 'New York, NY',
-    joinDate: '2023-02-20T00:00:00Z',
-    isVerified: true,
-  }
-];
+// Demo users removed. All operations now use backend API.
 
 // Utility functions
 const generateToken = (userId) => `demo_token_${userId}_${Date.now()}`;
@@ -87,24 +59,8 @@ export const authService = {
   // Login user
   async login(email, password) {
     try {
-      // In production, replace with actual API call:
-      // const response = await api.post('/auth/login', { email, password });
-      // return response.data;
-      
-      // Demo implementation
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const user = demoUsers.find(u => u.email === email);
-      if (!user || user.password !== password) {
-        throw new Error('Invalid email or password');
-      }
-      
-      const token = generateToken(user._id);
-      return {
-        user: sanitizeUser(user),
-        token,
-        message: 'Login successful'
-      };
+      const response = await api.post('/auth/login', { email, password });
+      return response.data;
     } catch (error) {
       handleApiError(error);
     }
@@ -113,36 +69,8 @@ export const authService = {
   // Register new user
   async register(userData) {
     try {
-      // In production, replace with actual API call:
-      // const response = await api.post('/auth/register', userData);
-      // return response.data;
-      
-      // Demo implementation
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (demoUsers.find(u => u.email === userData.email)) {
-        throw new Error('User with this email already exists');
-      }
-      
-      const newUser = {
-        _id: Date.now().toString(),
-        ...userData,
-        profileImage: null,
-        phone: userData.phone || '',
-        bio: userData.bio || '',
-        location: userData.location || '',
-        joinDate: new Date().toISOString(),
-        isVerified: false,
-      };
-      
-      demoUsers.push(newUser);
-      const token = generateToken(newUser._id);
-      
-      return {
-        user: sanitizeUser(newUser),
-        token,
-        message: 'Registration successful'
-      };
+      const response = await api.post('/auth/register', userData);
+      return response.data;
     } catch (error) {
       handleApiError(error);
     }
@@ -151,26 +79,10 @@ export const authService = {
   // Verify token and get user data
   async verifyToken(token) {
     try {
-      // In production, replace with actual API call:
-      // const response = await api.get('/auth/verify');
-      // return response.data.user;
-      
-      // Demo implementation
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const tokenParts = token.split('_');
-      if (tokenParts.length < 3) {
-        throw new Error('Invalid token format');
-      }
-      
-      const userId = tokenParts[2];
-      const user = demoUsers.find(u => u._id === userId);
-      
-      if (!user) {
-        throw new Error('Invalid token');
-      }
-      
-      return sanitizeUser(user);
+      const response = await api.get('/auth/verify', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data.user;
     } catch (error) {
       handleApiError(error);
     }
@@ -179,25 +91,8 @@ export const authService = {
   // Update user profile
   async updateProfile(userId, updateData) {
     try {
-      // In production, replace with actual API call:
-      // const response = await api.put(`/users/${userId}`, updateData);
-      // return response.data;
-      
-      // Demo implementation
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const userIndex = demoUsers.findIndex(u => u._id === userId);
-      if (userIndex === -1) {
-        throw new Error('User not found');
-      }
-      
-      demoUsers[userIndex] = { 
-        ...demoUsers[userIndex], 
-        ...updateData,
-        updatedAt: new Date().toISOString()
-      };
-      
-      return sanitizeUser(demoUsers[userIndex]);
+      const response = await api.put(`/users/${userId}`, updateData);
+      return response.data;
     } catch (error) {
       handleApiError(error);
     }
