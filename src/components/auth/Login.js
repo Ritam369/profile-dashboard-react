@@ -64,13 +64,6 @@ const Login = ({ onToggleAuth }) => {
     }
   };
 
-  const handleDemoLogin = () => {
-    setFormData({
-      email: 'john@example.com',
-      password: 'password123'
-    });
-  };
-
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="card">
@@ -158,18 +151,6 @@ const Login = ({ onToggleAuth }) => {
             )}
           </button>
         </form>
-
-        {/* Demo Login */}
-        <div className="mt-4">
-          <button
-            type="button"
-            onClick={handleDemoLogin}
-            className="w-full text-sm text-primary-600 hover:text-primary-700 font-medium"
-            disabled={loading}
-          >
-            Use Demo Account (john@example.com)
-          </button>
-        </div>
 
         {/* Toggle to Register */}
         <div className="mt-6 text-center">

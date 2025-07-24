@@ -31,6 +31,7 @@ const ProfileDashboard = ({ onBack }) => {
   const handleImageUpload = async (imageFile) => {
     try {
       await uploadProfileImage(imageFile);
+      // The useProfile hook will update the profile state and re-render the image automatically
     } catch (error) {
       console.error('Image upload failed:', error);
     }
@@ -59,7 +60,7 @@ const ProfileDashboard = ({ onBack }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="flex items-center space-x-3 text-primary-600">
           <Loader className="w-8 h-8 animate-spin" />
           <span className="text-lg font-medium">Loading your profile...</span>
@@ -70,7 +71,7 @@ const ProfileDashboard = ({ onBack }) => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="card max-w-md mx-4">
           <div className="text-center">
             <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
@@ -92,7 +93,7 @@ const ProfileDashboard = ({ onBack }) => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="card max-w-md mx-4">
           <div className="text-center">
             <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -107,7 +108,7 @@ const ProfileDashboard = ({ onBack }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
@@ -140,6 +141,11 @@ const ProfileDashboard = ({ onBack }) => {
                   currentImage={profile.profileImage}
                   onImageUpload={handleImageUpload}
                   uploading={uploading}
+                  defaultAvatarUrl={
+                    !profile.profileImage
+                      ? 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.firstName + ' ' + profile.lastName) + '&background=0D8ABC&color=fff&size=128'
+                      : undefined
+                  }
                 />
               </div>
 
