@@ -2,6 +2,7 @@ import React from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import AuthPage from './pages/AuthPage';
 import DashboardLayout from './components/layout/DashboardLayout';
+import ErrorBoundary from './components/ErrorBoundary';
 import { Loader } from 'lucide-react';
 import './index.css';
 
@@ -24,11 +25,13 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <div className="App">
-        <AppContent />
-      </div>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <div className="App">
+          <AppContent />
+        </div>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

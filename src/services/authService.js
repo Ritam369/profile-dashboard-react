@@ -9,30 +9,46 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000,
 });
 
 // Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-// Mock users database (replace with real backend)
-const mockUsers = [
+// Response interceptor for handling errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Demo users for development (remove in production)
+const demoUsers = [
   {
     _id: '1',
     firstName: 'John',
     lastName: 'Doe',
     email: 'john@example.com',
-    password: 'password123', // In real app, this would be hashed
+    password: 'password123',
     profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
     phone: '+1 (555) 123-4567',
     bio: 'Software developer passionate about creating amazing user experiences.',
     location: 'San Francisco, CA',
-    joinDate: '2023-01-15',
+    joinDate: '2023-01-15T00:00:00Z',
     isVerified: true,
   },
   {
@@ -45,68 +61,69 @@ const mockUsers = [
     phone: '+1 (555) 987-6543',
     bio: 'UI/UX designer with a passion for user-centered design.',
     location: 'New York, NY',
-    joinDate: '2023-02-20',
+    joinDate: '2023-02-20T00:00:00Z',
     isVerified: true,
   }
 ];
 
-// Generate mock JWT token
-const generateMockToken = (userId) => {
-  return `mock_token_${userId}_${Date.now()}`;
-};
-
-// Extract user data without password
+// Utility functions
+const generateToken = (userId) => `demo_token_${userId}_${Date.now()}`;
 const sanitizeUser = (user) => {
   const { password, ...sanitizedUser } = user;
   return sanitizedUser;
+};
+
+const handleApiError = (error) => {
+  if (error.response) {
+    throw new Error(error.response.data?.message || 'Server error occurred');
+  } else if (error.request) {
+    throw new Error('Network error - please check your connection');
+  } else {
+    throw new Error(error.message || 'An unexpected error occurred');
+  }
 };
 
 export const authService = {
   // Login user
   async login(email, password) {
     try {
-      // For demo purposes, simulate API call
+      // In production, replace with actual API call:
+      // const response = await api.post('/auth/login', { email, password });
+      // return response.data;
+      
+      // Demo implementation
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Find user by email
-      const user = mockUsers.find(u => u.email === email);
-      
+      const user = demoUsers.find(u => u.email === email);
       if (!user || user.password !== password) {
         throw new Error('Invalid email or password');
       }
       
-      const token = generateMockToken(user._id);
-      const sanitizedUser = sanitizeUser(user);
-      
+      const token = generateToken(user._id);
       return {
-        user: sanitizedUser,
+        user: sanitizeUser(user),
         token,
         message: 'Login successful'
       };
-      
-      // Real implementation would be:
-      // const response = await api.post('/auth/login', { email, password });
-      // return response.data;
-      
     } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+      handleApiError(error);
     }
   },
 
   // Register new user
   async register(userData) {
     try {
-      // For demo purposes, simulate API call
+      // In production, replace with actual API call:
+      // const response = await api.post('/auth/register', userData);
+      // return response.data;
+      
+      // Demo implementation
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Check if user already exists
-      const existingUser = mockUsers.find(u => u.email === userData.email);
-      if (existingUser) {
+      if (demoUsers.find(u => u.email === userData.email)) {
         throw new Error('User with this email already exists');
       }
       
-      // Create new user
       const newUser = {
         _id: Date.now().toString(),
         ...userData,
@@ -118,92 +135,82 @@ export const authService = {
         isVerified: false,
       };
       
-      // Add to mock database
-      mockUsers.push(newUser);
-      
-      const token = generateMockToken(newUser._id);
-      const sanitizedUser = sanitizeUser(newUser);
+      demoUsers.push(newUser);
+      const token = generateToken(newUser._id);
       
       return {
-        user: sanitizedUser,
+        user: sanitizeUser(newUser),
         token,
         message: 'Registration successful'
       };
-      
-      // Real implementation would be:
-      // const response = await api.post('/auth/register', userData);
-      // return response.data;
-      
     } catch (error) {
-      console.error('Registration error:', error);
-      throw error;
+      handleApiError(error);
     }
   },
 
   // Verify token and get user data
   async verifyToken(token) {
     try {
-      // For demo purposes, simulate API call
+      // In production, replace with actual API call:
+      // const response = await api.get('/auth/verify');
+      // return response.data.user;
+      
+      // Demo implementation
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Extract user ID from mock token
-      const userId = token.split('_')[2];
-      const user = mockUsers.find(u => u._id === userId);
+      const tokenParts = token.split('_');
+      if (tokenParts.length < 3) {
+        throw new Error('Invalid token format');
+      }
+      
+      const userId = tokenParts[2];
+      const user = demoUsers.find(u => u._id === userId);
       
       if (!user) {
         throw new Error('Invalid token');
       }
       
       return sanitizeUser(user);
-      
-      // Real implementation would be:
-      // const response = await api.get('/auth/verify', {
-      //   headers: { Authorization: `Bearer ${token}` }
-      // });
-      // return response.data.user;
-      
     } catch (error) {
-      console.error('Token verification error:', error);
-      throw error;
+      handleApiError(error);
     }
   },
 
   // Update user profile
   async updateProfile(userId, updateData) {
     try {
-      // For demo purposes, simulate API call
+      // In production, replace with actual API call:
+      // const response = await api.put(`/users/${userId}`, updateData);
+      // return response.data;
+      
+      // Demo implementation
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      const userIndex = mockUsers.findIndex(u => u._id === userId);
+      const userIndex = demoUsers.findIndex(u => u._id === userId);
       if (userIndex === -1) {
         throw new Error('User not found');
       }
       
-      // Update user data
-      mockUsers[userIndex] = { ...mockUsers[userIndex], ...updateData };
+      demoUsers[userIndex] = { 
+        ...demoUsers[userIndex], 
+        ...updateData,
+        updatedAt: new Date().toISOString()
+      };
       
-      return sanitizeUser(mockUsers[userIndex]);
-      
-      // Real implementation would be:
-      // const response = await api.put(`/auth/profile/${userId}`, updateData);
-      // return response.data;
-      
+      return sanitizeUser(demoUsers[userIndex]);
     } catch (error) {
-      console.error('Profile update error:', error);
-      throw error;
+      handleApiError(error);
     }
   },
 
-  // Logout (mainly for cleanup)
+  // Logout
   async logout() {
     try {
-      // Clear any server-side sessions if needed
+      // In production, you might want to invalidate the token on the server:
       // await api.post('/auth/logout');
       
-      // Remove token from localStorage (done in AuthContext)
       return { message: 'Logout successful' };
     } catch (error) {
-      console.error('Logout error:', error);
       // Don't throw error for logout - always allow user to logout locally
       return { message: 'Logout successful' };
     }

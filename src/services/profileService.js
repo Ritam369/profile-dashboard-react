@@ -1,90 +1,73 @@
-import axios from 'axios';
 import { authService } from './authService';
 import { cloudinaryService } from './cloudinaryService';
 
-// Configure base URL - you'll need to replace this with your actual backend URL
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Mock user data for development (replace with actual API calls)
-const mockUser = {
-  _id: '1',
-  firstName: 'John',
-  lastName: 'Doe',
-  email: 'john.doe@example.com',
-  phone: '+1 (555) 123-4567',
-  bio: 'Software developer passionate about creating amazing user experiences.',
-  profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-  location: 'San Francisco, CA',
-  joinDate: '2023-01-15',
-  isVerified: true,
-};
-
 export const profileService = {
-  // Get user profile (now uses auth service)
-  async getProfile(userId) {
+  // Get user profile
+  async getProfile() {
     try {
-      // Use auth service to get current user data
       const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error('No authentication token found');
+        throw new Error('Authentication required');
       }
       
-      const userData = await authService.verifyToken(token);
-      return userData;
+      return await authService.verifyToken(token);
     } catch (error) {
       console.error('Error fetching profile:', error);
-      throw error;
+      throw new Error(error.message || 'Failed to fetch profile');
     }
   },
 
   // Update user profile
   async updateProfile(userId, profileData) {
     try {
-      const updatedUser = await authService.updateProfile(userId, profileData);
-      return updatedUser;
+      if (!userId || !profileData) {
+        throw new Error('Invalid profile data');
+      }
+
+      return await authService.updateProfile(userId, profileData);
     } catch (error) {
       console.error('Error updating profile:', error);
-      throw error;
+      throw new Error(error.message || 'Failed to update profile');
     }
   },
 
-  // Upload profile image using Cloudinary
+  // Upload profile image
   async uploadProfileImage(userId, imageFile) {
     try {
-      // First upload to Cloudinary
-      const cloudinaryResult = await cloudinaryService.uploadImage(imageFile);
+      if (!userId || !imageFile) {
+        throw new Error('Invalid upload data');
+      }
+
+      // Upload to Cloudinary
+      const uploadResult = await cloudinaryService.uploadImage(imageFile);
       
-      // Then update user profile with new image URL
-      const updatedUser = await authService.updateProfile(userId, {
-        profileImage: cloudinaryResult.secure_url
+      // Update user profile with new image URL
+      await authService.updateProfile(userId, {
+        profileImage: uploadResult.secure_url
       });
       
-      return { profileImage: cloudinaryResult.secure_url };
+      return { 
+        profileImage: uploadResult.secure_url,
+        publicId: uploadResult.public_id
+      };
     } catch (error) {
       console.error('Error uploading image:', error);
-      throw error;
+      throw new Error(error.message || 'Failed to upload image');
     }
   },
 
-  // Delete user profile
+  // Delete user profile (placeholder for future implementation)
   async deleteProfile(userId) {
     try {
+      // In production, implement actual delete logic
       // const response = await api.delete(`/users/${userId}`);
       // return response.data;
       
-      return new Promise((resolve) => {
-        setTimeout(() => resolve({ success: true }), 500);
-      });
+      console.warn('Delete profile not implemented in demo mode');
+      return { success: true, message: 'Profile deletion not available in demo' };
     } catch (error) {
       console.error('Error deleting profile:', error);
-      throw error;
+      throw new Error(error.message || 'Failed to delete profile');
     }
   }
 };

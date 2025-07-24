@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authService } from '../services/authService';
 
 const AuthContext = createContext();
@@ -16,18 +16,24 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Check if user is logged in on app start
+  // Clear error when user interacts
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  // Initialize authentication on app start
   useEffect(() => {
     const initializeAuth = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (token) {
+        if (token && token !== 'undefined') {
           const userData = await authService.verifyToken(token);
           setUser(userData);
         }
       } catch (error) {
         console.error('Auth initialization failed:', error);
         localStorage.removeItem('token');
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -37,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Login function
-  const login = async (email, password) => {
+  const login = useCallback(async (email, password) => {
     try {
       setError(null);
       setLoading(true);
@@ -48,15 +54,16 @@ export const AuthProvider = ({ children }) => {
       
       return response;
     } catch (error) {
-      setError(error.message || 'Login failed');
-      throw error;
+      const errorMessage = error.message || 'Login failed';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Register function
-  const register = async (userData) => {
+  const register = useCallback(async (userData) => {
     try {
       setError(null);
       setLoading(true);
@@ -67,24 +74,31 @@ export const AuthProvider = ({ children }) => {
       
       return response;
     } catch (error) {
-      setError(error.message || 'Registration failed');
-      throw error;
+      const errorMessage = error.message || 'Registration failed';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Logout function
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('token');
-    setError(null);
-  };
+  const logout = useCallback(async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+      localStorage.removeItem('token');
+      setError(null);
+    }
+  }, []);
 
   // Update user data
-  const updateUser = (userData) => {
-    setUser(prev => ({ ...prev, ...userData }));
-  };
+  const updateUser = useCallback((userData) => {
+    setUser(prev => prev ? { ...prev, ...userData } : null);
+  }, []);
 
   const value = {
     user,
@@ -94,6 +108,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     updateUser,
+    clearError,
     isAuthenticated: !!user
   };
 

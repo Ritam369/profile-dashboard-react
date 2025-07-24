@@ -18,12 +18,16 @@ const Login = ({ onToggleAuth }) => {
       [name]: value
     }));
     
-    // Clear error when user starts typing
+    // Clear errors when user starts typing
     if (formErrors[name]) {
       setFormErrors(prev => ({
         ...prev,
         [name]: ''
       }));
+    }
+    if (error) {
+      // Clear auth error when user starts typing
+      setTimeout(() => setError && setError(null), 100);
     }
   };
 
