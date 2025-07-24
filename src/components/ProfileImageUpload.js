@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
-import { Camera, Upload, Loader } from 'lucide-react';
-import { cloudinaryService } from '../services/cloudinaryService';
+import React, { useRef, useState } from "react";
+import { Camera, Upload, Loader } from "lucide-react";
+import { cloudinaryService } from "../services/cloudinaryService";
 
 const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false }) => {
   const fileInputRef = useRef(null);
@@ -49,7 +49,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false }) 
     <div className="relative group">
       <div className="relative w-32 h-32">
         {/* Profile Image */}
-        <img
+        <img  crossOrigin="anonymous"
           src={currentImage || 'https://via.placeholder.com/150x150/e2e8f0/64748b?text=No+Image'}
           alt="Profile"
           className="profile-image"

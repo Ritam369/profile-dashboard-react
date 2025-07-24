@@ -91,7 +91,7 @@ export const authService = {
   // Update user profile
   async updateProfile(userId, updateData) {
     try {
-      const response = await api.put(`/users/${userId}`, updateData);
+      const response = await api.put(`/users/profile/${userId}`, updateData);
       return response.data;
     } catch (error) {
       handleApiError(error);

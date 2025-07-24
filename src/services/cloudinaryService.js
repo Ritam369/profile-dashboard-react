@@ -25,7 +25,6 @@ export const cloudinaryService = {
       formData.append('file', file);
       formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
       formData.append('folder', 'profile_images');
-      formData.append('transformation', 'c_fill,w_400,h_400,q_auto,f_auto');
       
       const response = await fetch(CLOUDINARY_API_URL, {
         method: 'POST',
@@ -71,7 +70,7 @@ export const cloudinaryService = {
       // In production, this should be done on the backend
       // as it requires the API secret which shouldn't be exposed
       const response = await fetch('/api/cloudinary/delete', {
-        method: 'POST',
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
