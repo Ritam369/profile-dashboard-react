@@ -22,7 +22,6 @@ const Register = ({ onToggleAuth }) => {
       [name]: value
     }));
     
-    // Clear error when user starts typing
     if (formErrors[name]) {
       setFormErrors(prev => ({
         ...prev,
@@ -97,9 +96,7 @@ const Register = ({ onToggleAuth }) => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name Fields */}
           <div className="grid grid-cols-2 gap-3">
-            {/* First Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <User className="w-4 h-4 inline mr-2" />
@@ -119,7 +116,6 @@ const Register = ({ onToggleAuth }) => {
               )}
             </div>
 
-            {/* Last Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Last Name
@@ -139,7 +135,6 @@ const Register = ({ onToggleAuth }) => {
             </div>
           </div>
 
-          {/* Email Field */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               <Mail className="w-4 h-4 inline mr-2" />
@@ -159,7 +154,6 @@ const Register = ({ onToggleAuth }) => {
             )}
           </div>
 
-          {/* Password Field */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               <Lock className="w-4 h-4 inline mr-2" />
@@ -189,7 +183,6 @@ const Register = ({ onToggleAuth }) => {
             )}
           </div>
 
-          {/* Confirm Password Field */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               <Lock className="w-4 h-4 inline mr-2" />
@@ -219,7 +212,6 @@ const Register = ({ onToggleAuth }) => {
             )}
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -239,7 +231,6 @@ const Register = ({ onToggleAuth }) => {
           </button>
         </form>
 
-        {/* Toggle to Login */}
         <div className="mt-6 text-center">
           <p className="text-gray-600">
             Already have an account?{' '}

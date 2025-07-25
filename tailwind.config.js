@@ -40,7 +40,6 @@ module.exports = {
     },
   },
   plugins: [],
-  // Production optimizations
   ...(process.env.NODE_ENV === 'production' && {
     purge: {
       enabled: true,
