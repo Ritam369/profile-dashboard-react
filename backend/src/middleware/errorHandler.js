@@ -1,6 +1,5 @@
 
 const errorHandler = (err, req, res, next) => {
-  // Log stack trace for debugging (not sent to client)
   if (err.stack) {
     console.error(err.stack);
   }

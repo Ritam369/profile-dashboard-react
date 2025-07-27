@@ -33,7 +33,7 @@ const startServer = async () => {
   try {
     await connectDB();
     const server = app.listen(PORT, () => {
-      console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+      console.log(`Server running on port ${PORT}`);
     });
 
     // Handle unhandled promise rejections
