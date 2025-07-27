@@ -1,14 +1,16 @@
+
 import { authService } from './authService';
 import { cloudinaryService } from './cloudinaryService';
 
+// Service for profile-related API calls and logic
 export const profileService = {
+  // Fetch the current user's profile
   async getProfile() {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('Authentication required');
       }
-      
       return await authService.verifyToken(token);
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -16,12 +18,12 @@ export const profileService = {
     }
   },
 
+  // Update the user's profile data
   async updateProfile(userId, profileData) {
     try {
       if (!userId || !profileData) {
         throw new Error('Invalid profile data');
       }
-
       return await authService.updateProfile(userId, profileData);
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -29,19 +31,22 @@ export const profileService = {
     }
   },
 
+  // Upload a new profile image and update the user's profile
   async uploadProfileImage(userId, imageFile) {
     try {
       if (!userId || !imageFile) {
         throw new Error('Invalid upload data');
       }
 
+      // Upload image to Cloudinary
       const uploadResult = await cloudinaryService.uploadImage(imageFile);
-      
+
+      // Update user profile with new image URL
       await authService.updateProfile(userId, {
         profileImage: uploadResult.secure_url
       });
-      
-      return { 
+
+      return {
         profileImage: uploadResult.secure_url,
         publicId: uploadResult.public_id
       };
@@ -51,16 +56,6 @@ export const profileService = {
     }
   },
 
-  async deleteProfile(userId) {
-    try {
-      
-      console.warn('Delete profile not implemented in demo mode');
-      return { success: true, message: 'Profile deletion not available in demo' };
-    } catch (error) {
-      console.error('Error deleting profile:', error);
-      throw new Error(error.message || 'Failed to delete profile');
-    }
-  }
 };
 
 export default profileService;

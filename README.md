@@ -1,64 +1,92 @@
 
 # Profile Dashboard React
 
-A modern, production-ready profile dashboard application built with React, Tailwind CSS, and MongoDB Atlas. This project provides a complete solution for user authentication, profile management, and image uploads with Cloudinary integration.
+A modern, production-ready profile dashboard application built with React, Tailwind CSS, and MongoDB Atlas. This project follows the MVC (Model-View-Controller) architecture pattern and provides a complete solution for user authentication, profile management, and image uploads with Cloudinary integration.
 
-## Description
+## Project Structure
 
-Profile Dashboard React is designed for users who want a clean, responsive, and secure platform to manage their personal profiles. It features JWT-based authentication, real-time profile editing, and seamless image uploads. The UI is built with Tailwind CSS for a modern look and mobile responsiveness. The backend is powered by Node.js, Express, and MongoDB Atlas, ensuring robust data storage and security. Cloudinary integration allows for optimized image handling. The project is suitable for both personal and professional use cases where user profile management is required.
+The application is structured following the MVC pattern for better separation of concerns and maintainability.
+
+### Frontend (React)
+```
+src/
+├── components/         # Reusable UI components
+│   ├── auth/          # Authentication components (Login, Register)
+│   ├── forms/         # Form components (ProfileEditForm, ProfileImageUpload)
+│   └── layout/        # Layout components (DashboardLayout, Navbar)
+├── config/            # Configuration files
+├── controllers/       # Business logic and API services (moved from services/)
+│   ├── authService.js
+│   ├── profileService.js
+│   └── cloudinaryService.js
+├── context/           # React context providers (AuthContext)
+├── hooks/             # Custom React hooks (useProfile, useAuth)
+├── models/            # Data models and TypeScript interfaces
+├── utils/             # Utility functions
+│   ├── api/           # API utility functions
+│   └── validators/    # Form validation utilities
+└── views/             # Page components (AuthPage, ProfileDashboard)
+```
+
+### Backend (Node.js/Express)
+```
+backend/
+├── src/
+│   ├── config/           # Configuration files
+│   │   └── database.js   # Database connection
+│   ├── controllers/      # Route controllers
+│   │   ├── authController.js
+│   │   └── userController.js
+│   ├── middleware/       # Custom middleware
+│   │   └── errorHandler.js
+│   ├── models/           # Database models
+│   ├── routes/           # Route definitions
+│   │   ├── auth.js
+│   │   ├── cloudinary.js
+│   │   └── user.js
+│   └── utils/            # Utility functions
+├── .env.example          # Example environment variables
+└── server.js             # Application entry point
+```
 
 ## Features
-- **Authentication System:** Secure login and registration with JWT tokens
-- **Profile Management:** Edit profile details, including name, email, phone, bio, and location
-- **Image Uploads:** Upload and update profile images using Cloudinary
-- **Modern UI:** Responsive design with Tailwind CSS
-- **Error Handling:** Graceful error boundaries and user feedback
-- **Mobile Friendly:** Works perfectly on all devices
-- **Production Ready:** Optimized builds and secure backend
+
+### Core Architecture
+- **MVC Pattern:** Clean separation of concerns with Model-View-Controller architecture
+- **Modular Design:** Organized directory structure for better maintainability
+- **Environment Configuration:** Easy setup for development and production environments
+
+### Authentication & Security
+- **JWT Authentication:** Secure token-based authentication system
+- **Protected Routes:** Client and server-side route protection
+- **Form Validation:** Client and server-side validation for all user inputs
+- **Password Hashing:** Secure password storage using bcrypt
+
+### User Experience
+- **Responsive Design:** Fully responsive layout that works on all devices
+- **Image Upload:** Drag-and-drop image upload with preview
+- **Real-time Updates:** UI updates without page refresh
+- **Loading States:** Visual feedback during API requests
+- **Error Handling:** User-friendly error messages and validation feedback
+
+### Performance
+- **Code Splitting:** React.lazy for optimized bundle sizes
+- **Image Optimization:** Cloudinary integration for optimized image delivery
+- **Efficient State Management:** React Context API for global state
+- **Optimized Builds:** Production-ready builds with minification and compression
 
 ## Technology Stack
 - **Frontend:** React 19.x, Tailwind CSS 4.x, Lucide React (icons), Axios
 - **Backend:** Node.js, Express, MongoDB Atlas, JWT, Cloudinary
 
-## Project Structure
-```
-profile-dashboard-react/
-├── backend/                # Node.js/Express backend
-│   ├── src/
-│   │   ├── controllers/
-│   │   ├── models/
-│   │   ├── routes/
-│   ├── .env
-│   ├── package.json
-│   └── server.js
-├── public/
-│   └── index.html
-├── src/
-│   ├── components/
-│   │   ├── auth/
-│   │   ├── layout/
-│   │   ├── ProfileEditForm.js
-│   │   ├── ProfileImageUpload.js
-│   ├── context/
-│   ├── hooks/
-│   ├── pages/
-│   ├── services/
-│   ├── index.js
-│   ├── App.js
-│   └── index.css
-├── tailwind.config.js
-├── postcss.config.js
-├── package.json
-└── README.md
-```
-
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v14 or higher)
+- Node.js (v16 or higher recommended)
 - npm or yarn
-- MongoDB Atlas account
+- MongoDB Atlas account (or local MongoDB instance)
 - Cloudinary account (for image uploads)
+- Git (for version control)
 
 ### Installation
 1. **Clone the repository:**
@@ -76,20 +104,39 @@ profile-dashboard-react/
    npm install
    ```
 4. **Configure environment variables:**
-   - Create `.env` files in both frontend and backend folders using the provided `.env.example` templates.
-   - Set your MongoDB Atlas URI, JWT secret, and Cloudinary credentials.
+   - In the project root, create a `.env` file based on `.env.example` for frontend variables.
+   - In the `backend` folder, create a `.env` file based on `.env.example` for backend variables.
+   - Configure the following required environment variables:
+     - Frontend: `REACT_APP_API_URL` (points to your backend API)
+     - Backend: 
+       - `MONGODB_URI` (MongoDB connection string)
+       - `JWT_SECRET` (for JWT token signing)
+       - `CLOUDINARY` related credentials
 
-### Running the Project
-- **Start the backend server:**
-  ```sh
-  cd backend
-  npm run dev
-  ```
-- **Start the frontend app:**
-  ```sh
-  npm start
-  ```
-- The app will be available at `http://localhost:3000` (frontend) and `http://localhost:5000` (backend API).
+## Running the Project
+
+1. **Start the backend server:**
+   ```sh
+   # In the backend directory
+   cd backend
+   npm install
+   npm run dev
+   ```
+   - The backend server will start on `http://localhost:5000` by default
+   - API endpoints will be available under `http://localhost:5000/api/`
+
+2. **Start the frontend app (in a new terminal):**
+   ```sh
+   # From project root
+   npm install
+   npm start
+   ```
+   - The React development server will start on `http://localhost:3000`
+   - The page will automatically reload when you make changes
+
+3. **Access the application:**
+   - Open [http://localhost:3000](http://localhost:3000) in your browser
+   - The frontend will automatically connect to the backend API at `http://localhost:5000`
 
 ## Usage
 - Register a new account or log in with existing credentials.
@@ -126,30 +173,36 @@ For more details, see the code comments and documentation in each folder. Contri
 
 ### Environment Variables
 
-Create a `.env` file in the root directory for environment-specific configurations:
-
-```env
-REACT_APP_API_URL=http://localhost:5000/api
-REACT_APP_MONGODB_URI=your_mongodb_atlas_connection_string
-```
-
-### MongoDB Atlas Integration
-
-The application is designed to work with MongoDB Atlas. To integrate with a real backend:
-
-1. **Set up MongoDB Atlas**:
-   - Create a cluster on [MongoDB Atlas](https://www.mongodb.com/atlas)
-   - Get your connection string
-   - Create a database and collection for user profiles
-
-2. **Backend API Endpoints**:
-   The frontend expects these API endpoints:
+1. **Frontend (root directory)**
+   Create a `.env` file in the root directory:
+   ```env
+   REACT_APP_API_URL=http://localhost:5000/api/v1
    ```
-   GET    /api/users/:id          # Get user profile
-   PUT    /api/users/:id          # Update user profile
-   POST   /api/users/:id/upload-image # Upload profile image
-   DELETE /api/users/:id          # Delete user profile
+
+2. **Backend (backend directory)**
+   Create a `.env` file in the `backend` directory based on `.env.example`:
+   ```env
+   PORT=5000
+   MONGODB_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
    ```
+
+### API Endpoints
+
+The backend provides the following RESTful API endpoints:
+
+#### Authentication
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/verify` - Verify authentication token
+
+#### Users
+- `PUT /api/users/profile/:id` - Update user profile
+
+#### Cloudinary
+- `DELETE /api/cloudinary/delete` - Delete image (placeholder implementation)
+
+> **Note:** Some endpoints mentioned in the frontend code might not be fully implemented in the backend yet. The API base URL is `/api` (not `/api/v1`).
 
 3. **Profile Data Schema**:
    ```javascript
@@ -163,7 +216,6 @@ The application is designed to work with MongoDB Atlas. To integrate with a real
      profileImage: String,
      location: String,
      joinDate: Date,
-     isVerified: Boolean
    }
    ```
 

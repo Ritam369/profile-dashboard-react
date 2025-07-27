@@ -9,8 +9,7 @@ const userSchema = new mongoose.Schema({
   phone: { type: String, default: '' },
   bio: { type: String, default: '' },
   location: { type: String, default: '' },
-  joinDate: { type: Date, default: Date.now },
-  isVerified: { type: Boolean, default: false }
+  joinDate: { type: Date, default: Date.now }
 });
 
 export default mongoose.model('User', userSchema);

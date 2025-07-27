@@ -1,3 +1,5 @@
+
+// AuthPage: Handles toggling between Login and Register forms
 import React, { useState } from 'react';
 import Login from '../components/auth/Login';
 import Register from '../components/auth/Register';
@@ -5,8 +7,9 @@ import Register from '../components/auth/Register';
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
 
+  // Toggle between login and register views
   const toggleAuth = () => {
-    setIsLogin(!isLogin);
+    setIsLogin((prev) => !prev);
   };
 
   return (

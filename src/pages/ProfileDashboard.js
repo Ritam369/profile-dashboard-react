@@ -1,33 +1,21 @@
+
+// ProfileDashboard: Main user profile page with view and edit functionality
 import React, { useState } from 'react';
 import { 
-  Edit3, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Calendar, 
-  CheckCircle, 
-  User, 
-  Loader,
-  AlertCircle,
-  ArrowLeft 
+  Edit3, Mail, Phone, MapPin, Calendar, CheckCircle, User, Loader, AlertCircle, ArrowLeft 
 } from 'lucide-react';
 import useProfile from '../hooks/useProfile';
 import ProfileImageUpload from '../components/ProfileImageUpload';
 import ProfileEditForm from '../components/ProfileEditForm';
 
+
 const ProfileDashboard = ({ onBack }) => {
-  const { 
-    profile, 
-    loading, 
-    error, 
-    uploading, 
-    updateProfile, 
-    uploadProfileImage 
-  } = useProfile();
-  
+  // Get profile data and actions from custom hook
+  const { profile, loading, error, uploading, updateProfile, uploadProfileImage } = useProfile();
   const [showEditForm, setShowEditForm] = useState(false);
   const [updating, setUpdating] = useState(false);
 
+  // Handle profile image upload
   const handleImageUpload = async (imageFile) => {
     try {
       await uploadProfileImage(imageFile);
@@ -36,6 +24,7 @@ const ProfileDashboard = ({ onBack }) => {
     }
   };
 
+  // Handle profile update (edit form)
   const handleProfileUpdate = async (profileData) => {
     try {
       setUpdating(true);
@@ -48,6 +37,7 @@ const ProfileDashboard = ({ onBack }) => {
     }
   };
 
+  // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return 'Unknown';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -57,6 +47,7 @@ const ProfileDashboard = ({ onBack }) => {
     });
   };
 
+  // Loading state
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -68,6 +59,7 @@ const ProfileDashboard = ({ onBack }) => {
     );
   }
 
+  // Error state
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -90,6 +82,7 @@ const ProfileDashboard = ({ onBack }) => {
     );
   }
 
+  // No profile found state
   if (!profile) {
     return (
       <div className="min-h-screen flex items-center justify-center">

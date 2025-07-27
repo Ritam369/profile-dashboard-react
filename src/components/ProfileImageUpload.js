@@ -1,3 +1,5 @@
+
+// ProfileImageUpload: Handles profile image upload, drag-and-drop, and preview
 import React, { useRef, useState } from "react";
 import { Camera, Upload, Loader } from "lucide-react";
 import { cloudinaryService } from "../services/cloudinaryService";
@@ -6,6 +8,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
   const fileInputRef = useRef(null);
   const [dragOver, setDragOver] = useState(false);
 
+  // Handle file selection (from input or drop)
   const handleFileSelect = (file) => {
     try {
       cloudinaryService.validateImage(file);
@@ -15,6 +18,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
     }
   };
 
+  // Handle file input change
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -22,6 +26,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
     }
   };
 
+  // Handle file drop
   const handleDrop = (e) => {
     e.preventDefault();
     setDragOver(false);
@@ -31,21 +36,24 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
     }
   };
 
+  // Handle drag over
   const handleDragOver = (e) => {
     e.preventDefault();
     setDragOver(true);
   };
 
+  // Handle drag leave
   const handleDragLeave = (e) => {
     e.preventDefault();
     setDragOver(false);
   };
 
+  // Trigger file input click
   const triggerFileInput = () => {
     fileInputRef.current?.click();
   };
 
-  
+  // Get initials for avatar fallback
   const getInitials = () => {
     if (defaultAvatarUrl && defaultAvatarUrl.includes('name=')) {
       const match = decodeURIComponent(defaultAvatarUrl.split('name=')[1].split('&')[0] || '').split(' ');
@@ -57,7 +65,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
   return (
     <div className="relative group">
       <div className="relative w-32 h-32">
-        
+        {/* Profile image or initials avatar */}
         {currentImage ? (
           <img crossOrigin="anonymous"
             src={currentImage}
@@ -69,8 +77,8 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
             {getInitials()}
           </div>
         )}
-        
-        
+
+        {/* Overlay for drag-and-drop and change action */}
         <div
           className={`absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer ${dragOver ? 'opacity-100 bg-opacity-60' : ''}`}
           onClick={triggerFileInput}
@@ -89,7 +97,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
         </div>
       </div>
 
-      
+      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -98,7 +106,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
         className="hidden"
       />
 
-      
+      {/* Upload button */}
       <button
         onClick={triggerFileInput}
         disabled={uploading}
@@ -108,7 +116,7 @@ const ProfileImageUpload = ({ currentImage, onImageUpload, uploading = false, de
         <span>{uploading ? 'Uploading...' : 'Upload New Photo'}</span>
       </button>
 
-      
+      {/* Info text */}
       <p className="mt-2 text-xs text-gray-500">
         Supports JPG, PNG up to 5MB
       </p>

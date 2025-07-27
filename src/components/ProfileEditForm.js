@@ -1,7 +1,10 @@
+
+// ProfileEditForm: Form for editing user profile details
 import React, { useState, useEffect } from 'react';
 import { Save, X, User, Mail, Phone, MapPin, FileText } from 'lucide-react';
 
 const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
+  // Form state
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -10,9 +13,9 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
     bio: '',
     location: '',
   });
-
   const [errors, setErrors] = useState({});
 
+  // Populate form with profile data on mount/update
   useEffect(() => {
     if (profile) {
       setFormData({
@@ -26,46 +29,37 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
     }
   }, [profile]);
 
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
+    setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
+  // Validate form fields
   const validateForm = () => {
     const newErrors = {};
-
     if (!formData.firstName.trim()) {
       newErrors.firstName = 'First name is required';
     }
-
     if (!formData.lastName.trim()) {
       newErrors.lastName = 'Last name is required';
     }
-
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email';
     }
-
     if (formData.phone && !/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone.replace(/\s+/g, ''))) {
       newErrors.phone = 'Please enter a valid phone number';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  // Handle form submit
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
@@ -89,6 +83,7 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* First Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <User className="w-4 h-4 inline mr-2" />
@@ -108,6 +103,7 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
               )}
             </div>
 
+            {/* Last Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <User className="w-4 h-4 inline mr-2" />
@@ -127,6 +123,7 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
               )}
             </div>
 
+            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <Mail className="w-4 h-4 inline mr-2" />
@@ -146,6 +143,7 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
               )}
             </div>
 
+            {/* Phone */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <Phone className="w-4 h-4 inline mr-2" />
@@ -165,6 +163,7 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
               )}
             </div>
 
+            {/* Location */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <MapPin className="w-4 h-4 inline mr-2" />
@@ -181,6 +180,7 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
               />
             </div>
 
+            {/* Bio */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <FileText className="w-4 h-4 inline mr-2" />
@@ -200,6 +200,7 @@ const ProfileEditForm = ({ profile, onSave, onCancel, loading = false }) => {
               </p>
             </div>
 
+            {/* Action buttons */}
             <div className="flex space-x-3 pt-4">
               <button
                 type="submit"

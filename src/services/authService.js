@@ -1,7 +1,10 @@
+
+// Auth service for API calls related to authentication and user profile
 import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
+// Create axios instance with base config
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -10,6 +13,7 @@ const api = axios.create({
   timeout: 10000,
 });
 
+// Attach token to every request if available
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -21,6 +25,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Handle 401 errors globally
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -32,13 +37,7 @@ api.interceptors.response.use(
   }
 );
 
-
-const generateToken = (userId) => `demo_token_${userId}_${Date.now()}`;
-const sanitizeUser = (user) => {
-  const { password, ...sanitizedUser } = user;
-  return sanitizedUser;
-};
-
+// Helper to handle API errors
 const handleApiError = (error) => {
   if (error.response) {
     throw new Error(error.response.data?.message || 'Server error occurred');
@@ -50,6 +49,7 @@ const handleApiError = (error) => {
 };
 
 export const authService = {
+  // Login user
   async login(email, password) {
     try {
       const response = await api.post('/auth/login', { email, password });
@@ -59,6 +59,7 @@ export const authService = {
     }
   },
 
+  // Register new user
   async register(userData) {
     try {
       const response = await api.post('/auth/register', userData);
@@ -68,6 +69,7 @@ export const authService = {
     }
   },
 
+  // Verify JWT token and get user
   async verifyToken(token) {
     try {
       const response = await api.get('/auth/verify', {
@@ -79,6 +81,7 @@ export const authService = {
     }
   },
 
+  // Update user profile
   async updateProfile(userId, updateData) {
     try {
       const response = await api.put(`/users/profile/${userId}`, updateData);
@@ -88,9 +91,9 @@ export const authService = {
     }
   },
 
+  // Logout user 
   async logout() {
     try {
-      
       return { message: 'Logout successful' };
     } catch (error) {
       return { message: 'Logout successful' };

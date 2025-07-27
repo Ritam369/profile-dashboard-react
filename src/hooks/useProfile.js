@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+
+// Custom hook for profile actions and state
+import { useState } from 'react';
 import { profileService } from '../services/profileService';
 import { useAuth } from '../context/AuthContext';
 
@@ -8,6 +10,7 @@ export const useProfile = () => {
   const [error, setError] = useState(null);
   const [uploading, setUploading] = useState(false);
 
+  // Update profile details
   const updateProfile = async (profileData) => {
     try {
       setLoading(true);
@@ -23,6 +26,7 @@ export const useProfile = () => {
     }
   };
 
+  // Upload a new profile image
   const uploadProfileImage = async (imageFile) => {
     try {
       setUploading(true);
@@ -38,17 +42,8 @@ export const useProfile = () => {
     }
   };
 
-  const deleteProfile = async () => {
-    try {
-      setError(null);
-      const result = await profileService.deleteProfile(user._id);
-      return result;
-    } catch (err) {
-      setError(err.message || 'Failed to delete profile');
-      throw err;
-    }
-  };
 
+  // Return profile state and actions
   return {
     profile: user,
     loading,
@@ -56,7 +51,6 @@ export const useProfile = () => {
     uploading,
     updateProfile,
     uploadProfileImage,
-    deleteProfile,
   };
 };
 
