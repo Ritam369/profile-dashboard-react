@@ -99,7 +99,7 @@ router.post('/generate-pdf', async (req, res) => {
     doc.moveDown();
     if (userData.bio && userData.bio !== 'No bio available') {
       doc.fontSize(14)
-         .text('Biography:', { underline: true })
+         .text('Bio:', { underline: true })
          .moveDown(0.5);
       doc.fontSize(12)
          .text(userData.bio, { width: 500, align: 'justify' })
