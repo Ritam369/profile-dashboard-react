@@ -9,7 +9,12 @@ const userSchema = new mongoose.Schema({
   phone: { type: String, default: '' },
   bio: { type: String, default: '' },
   location: { type: String, default: '' },
-  joinDate: { type: Date, default: Date.now }
+  joinDate: { type: Date, default: Date.now },
+  pdfs: [{
+    filename: { type: String, required: true },
+    path: { type: String, required: true },
+    generatedAt: { type: Date, default: Date.now }
+  }]
 });
 
 export default mongoose.model('User', userSchema);

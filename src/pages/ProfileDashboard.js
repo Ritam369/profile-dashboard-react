@@ -1,19 +1,53 @@
 
 // ProfileDashboard: Main user profile page with view and edit functionality
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  Edit3, Mail, Phone, MapPin, Calendar, CheckCircle, User, Loader, AlertCircle, ArrowLeft 
+  Edit3, Mail, Phone, MapPin, Calendar, CheckCircle, User, Loader, AlertCircle, ArrowLeft, FileText, Download 
 } from 'lucide-react';
 import useProfile from '../hooks/useProfile';
 import ProfileImageUpload from '../components/ProfileImageUpload';
 import ProfileEditForm from '../components/ProfileEditForm';
+import api from '../services/api';
 
 
 const ProfileDashboard = ({ onBack }) => {
   // Get profile data and actions from custom hook
-  const { profile, loading, error, uploading, updateProfile, uploadProfileImage } = useProfile();
+  const { profile, loading, error, uploading, updateProfile, uploadProfileImage, pdfs, refreshPdfs } = useProfile();
   const [showEditForm, setShowEditForm] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+
+  // Handle PDF download
+  const handlePdfDownload = async (pdf) => {
+    try {
+      // Method 1: Try direct download via API
+      const response = await api.get(`/pdf/download/${pdf.filename}`, {
+        responseType: 'blob'
+      });
+      
+      // Create blob URL and trigger download
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = pdf.filename || 'profile.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed, trying alternative method:', error);
+      
+      // Method 2: Fallback to direct URL
+      const backendUrl = process.env.NODE_ENV === 'production' 
+        ? '' 
+        : 'http://localhost:5000';
+      const downloadUrl = `${backendUrl}${pdf.path}`;
+      
+      // Open in new tab as fallback
+      window.open(downloadUrl, '_blank');
+    }
+  };
 
   // Handle profile image upload
   const handleImageUpload = async (imageFile) => {
@@ -21,6 +55,39 @@ const ProfileDashboard = ({ onBack }) => {
       await uploadProfileImage(imageFile);
     } catch (error) {
       console.error('Image upload failed:', error);
+    }
+  };
+
+  // Generate PDF
+  const generatePDF = async () => {
+    if (!profile) return;
+    
+    try {
+      setGeneratingPdf(true);
+      const response = await api.post('/pdf/generate-pdf', {
+        userId: profile._id,
+        userData: {
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          email: profile.email,
+          bio: profile.bio || 'No bio available',
+          phone: profile.phone || 'Not provided',
+          location: profile.location || 'Not provided',
+          profileImage: profile.profileImage || '',
+        },
+      });
+      
+      if (response.data.success) {
+        // Refresh PDFs from server to get updated list
+        await refreshPdfs();
+        alert('PDF generated successfully!');
+      }
+    } catch (error) {
+      console.error('PDF generation failed:', error);
+      const errorMessage = error.response?.data?.error || error.message || 'Unknown error occurred';
+      alert(`Failed to generate PDF: ${errorMessage}`);
+    } finally {
+      setGeneratingPdf(false);
     }
   };
 
@@ -203,31 +270,79 @@ const ProfileDashboard = ({ onBack }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="card text-center">
-              <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <User className="w-6 h-6 text-primary-600" />
+          {/* PDF Generation Section */}
+          <div className="card">
+            <div className="border-b border-gray-200 pb-4 mb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Profile PDFs</h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Generate and download your profile as a PDF document
+                  </p>
+                </div>
+                <button
+                  onClick={generatePDF}
+                  disabled={generatingPdf || !profile}
+                  className="btn-primary flex items-center space-x-2"
+                >
+                  {generatingPdf ? (
+                    <>
+                      <Loader className="w-4 h-4 animate-spin" />
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <FileText className="w-4 h-4" />
+                      <span>Generate PDF</span>
+                    </>
+                  )}
+                </button>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">Profile Complete</h3>
-              <p className="text-gray-600">Your profile is looking great!</p>
             </div>
 
-            <div className="card text-center">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <CheckCircle className="w-6 h-6 text-green-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">Verified Account</h3>
-              <p className="text-gray-600">
-                {profile.isVerified ? 'Your account is verified' : 'Verification pending'}
-              </p>
-            </div>
-
-            <div className="card text-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Mail className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">Contact Ready</h3>
-              <p className="text-gray-600">All contact info is up to date</p>
+            <div>
+              {pdfs.length === 0 ? (
+                <div className="text-center py-8">
+                  <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h4 className="text-lg font-medium text-gray-900 mb-2">No PDFs Generated</h4>
+                  <p className="text-gray-600">
+                    Click "Generate PDF" to create your first profile document.
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <h4 className="text-md font-medium text-gray-900 mb-4">
+                    Your Profile PDFs ({pdfs.length})
+                  </h4>
+                  <div className="space-y-3">
+                    {pdfs.map((pdf, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <FileText className="w-5 h-5 text-primary-500" />
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {pdf.filename || `Profile PDF ${index + 1}`}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Generated: {pdf.generatedAt ? new Date(pdf.generatedAt).toLocaleDateString() : 'Unknown'}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handlePdfDownload(pdf)}
+                          className="flex items-center space-x-2 text-primary-600 hover:text-primary-700 font-medium"
+                        >
+                          <Download className="w-4 h-4" />
+                          <span>Download</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
