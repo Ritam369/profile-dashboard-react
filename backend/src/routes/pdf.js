@@ -54,9 +54,32 @@ router.post('/generate-pdf', async (req, res) => {
       }
     }
 
-    // Generate PDF
-    const pdfStream = fs.createWriteStream(pdfPath);
-    doc.pipe(pdfStream);
+    // Generate PDF in memory
+    const chunks = [];
+    doc.on('data', (chunk) => chunks.push(chunk));
+    doc.on('end', async () => {
+      const pdfBuffer = Buffer.concat(chunks);
+      // Clean up temp image file
+      if (tempImagePath) {
+        try { await fs.unlink(tempImagePath); } catch (e) { /* ignore */ }
+      }
+      // Save PDF buffer to user
+      try {
+        const filename = `profile-${userId.slice(-8)}-${Date.now()}.pdf`;
+        user.pdfs.push({
+          filename,
+          data: pdfBuffer,
+          contentType: 'application/pdf',
+          generatedAt: new Date()
+        });
+        await user.save();
+        console.log('PDF buffer saved to user successfully');
+        res.json({ success: true, filename });
+      } catch (saveError) {
+        console.error('Error saving PDF buffer to user:', saveError);
+        res.status(500).json({ error: 'Error saving PDF to database' });
+      }
+    });
 
     // Title
     doc.fontSize(24)
@@ -112,70 +135,30 @@ router.post('/generate-pdf', async (req, res) => {
        .text(`Generated on: ${new Date().toLocaleDateString()}`, { align: 'center' });
 
     doc.end();
-
-    // Wait for PDF to finish writing
-    const generatedFilename = await new Promise((resolve, reject) => {
-      pdfStream.on('finish', async () => {
-        // Clean up temp image file
-        if (tempImagePath) {
-          try { await fs.unlink(tempImagePath); } catch (e) { /* ignore */ }
-        }
-        resolve(pdfFilename);
-      });
-      pdfStream.on('error', (streamError) => {
-        console.error('PDF stream error:', streamError);
-        reject(streamError);
-      });
-    });
-    
-    // Save PDF info to user
-    try {
-      user.pdfs.push({ 
-        filename: generatedFilename, 
-        path: `/api/pdf/download/${generatedFilename}`,
-        generatedAt: new Date()
-      });
-      await user.save();
-      console.log('PDF info saved to user successfully');
-    } catch (saveError) {
-      console.error('Error saving PDF info to user:', saveError);
-      // Continue anyway, the PDF was created
-    }
-    
-    res.json({ 
-      success: true, 
-      path: `/api/pdf/download/${generatedFilename}`,
-      filename: generatedFilename
-    });
-    
   } catch (error) {
     console.error('Error generating PDF:', error);
     res.status(500).json({ error: 'Internal server error: ' + error.message });
   }
 });
 
-// Route to download/serve PDF files
+// Route to download/serve PDF files from MongoDB
 router.get('/download/:filename', async (req, res) => {
   try {
     const { filename } = req.params;
-    const pdfDir = path.join(__dirname, '../../pdfs');
-    const pdfPath = path.join(pdfDir, filename);
-
-    // Check if file exists
-    if (!await fs.pathExists(pdfPath)) {
+    // Find the user who has this PDF
+    const user = await User.findOne({ 'pdfs.filename': filename }, { 'pdfs.$': 1 });
+    if (!user || !user.pdfs || user.pdfs.length === 0) {
       return res.status(404).json({ error: 'PDF not found' });
     }
-
-    // Set headers for PDF download
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    
-    // Stream the file
-    const fileStream = fs.createReadStream(pdfPath);
-    fileStream.pipe(res);
-    
+    const pdf = user.pdfs[0];
+    if (!pdf.data) {
+      return res.status(404).json({ error: 'PDF data not found' });
+    }
+    res.setHeader('Content-Type', pdf.contentType || 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${pdf.filename}"`);
+    res.send(pdf.data);
   } catch (error) {
-    console.error('Error serving PDF:', error);
+    console.error('Error serving PDF from MongoDB:', error);
     res.status(500).json({ error: 'Error serving PDF file' });
   }
 });

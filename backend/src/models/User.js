@@ -12,7 +12,8 @@ const userSchema = new mongoose.Schema({
   joinDate: { type: Date, default: Date.now },
   pdfs: [{
     filename: { type: String, required: true },
-    path: { type: String, required: true },
+    data: { type: Buffer },
+    contentType: { type: String, default: 'application/pdf' },
     generatedAt: { type: Date, default: Date.now }
   }]
 });
