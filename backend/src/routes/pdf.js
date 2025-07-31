@@ -83,22 +83,27 @@ router.post('/generate-pdf', async (req, res) => {
 
     // Title
     doc.fontSize(24)
-       .text('Profile Information', { align: 'center' })
-       .moveDown(2);
+       .text('PROFILE INFORMATION PDF', { align: 'center', style: 'bold' , bold: true})
+       .moveDown(1.5);
 
-    // User Name
-    doc.fontSize(20)
-       .text(`${userData.firstName} ${userData.lastName}`, { align: 'center' })
-       .moveDown(2);
+    // Name
+    doc.fontSize(16)
+       .text(`Name: ${userData.firstName} ${userData.lastName}`, { align: 'left' })
+       .moveDown(1);
+
+    // Profile Image label
+    doc.fontSize(14)
+       .text('Profile Image:', { underline: true })
+       .moveDown(0.5);
 
     // Embed image if downloaded
     if (tempImagePath) {
       try {
         doc.image(tempImagePath, {
-          fit: [150, 150],
-          align: 'center'
+          fit: [200, 200],
+          align: 'left'
         });
-        doc.moveDown();
+        doc.moveDown(1.5);
       } catch (err) {
         console.log('Error embedding image:', err);
       }
