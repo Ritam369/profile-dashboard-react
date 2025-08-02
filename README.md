@@ -12,17 +12,39 @@ The application is structured following the MVC pattern for better separation of
 
 ### Frontend (React)
 ```
-src/
-├── components/
-│   ├── auth/                # Login, Register
-│   ├── layout/              # DashboardLayout, Navbar
-│   ├── ProfileEditForm.js   # Profile editing form
-│   └── ProfileImageUpload.js# Profile image upload
-├── context/                 # AuthContext.js
-├── hooks/                   # useProfile.js
-├── pages/                   # AuthPage.js, ProfileDashboard.js
-├── services/                # authService.js, profileService.js, cloudinaryService.js
-└── App.js, index.js         # App entry and root
+frontend/
+├── public/
+│   └── index.html
+├── src/
+│   ├── components/
+│   │   ├── auth/
+│   │   │   ├── Login.js
+│   │   │   └── Register.js
+│   │   ├── layout/
+│   │   │   ├── DashboardLayout.js
+│   │   │   └── Navbar.js
+│   │   ├── ErrorBoundary.js
+│   │   ├── ProfileEditForm.js
+│   │   └── ProfileImageUpload.js
+│   ├── context/
+│   │   └── AuthContext.js
+│   ├── hooks/
+│   │   └── useProfile.js
+│   ├── pages/
+│   │   ├── AuthPage.js
+│   │   └── ProfileDashboard.js
+│   ├── services/
+│   │   ├── api.js
+│   │   ├── authService.js
+│   │   ├── cloudinaryService.js
+│   │   └── profileService.js
+│   ├── App.js
+│   ├── index.css
+│   └── index.js
+├── .env.example
+├── package.json
+├── postcss.config.js
+└── tailwind.config.js
 ```
 
 
@@ -31,12 +53,24 @@ src/
 ```
 backend/
 ├── src/
-│   ├── config/           # database.js
-│   ├── controllers/      # authController.js, userController.js
-│   ├── middleware/       # errorHandler.js
-│   ├── models/           # User.js
-│   ├── routes/           # auth.js, cloudinary.js, user.js
-└── server.js             # Application entry point
+│   ├── config/
+│   │   └── database.js
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   └── userController.js
+│   ├── middleware/
+│   │   └── errorHandler.js
+│   ├── models/
+│   │   └── User.js
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── cloudinary.js
+│   │   ├── pdf.js
+│   │   └── user.js
+├── .env.example
+├── package.json
+├── README.md
+└── server.js
 ```
 
 ## Features
@@ -132,5 +166,6 @@ backend/
 - Register a new account or log in with existing credentials.
 - Edit your profile details and upload a profile image.
 - All changes are saved in MongoDB Atlas and images are stored in Cloudinary.
+
 
 
