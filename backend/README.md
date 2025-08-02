@@ -6,29 +6,25 @@ This is the backend API for the Profile Dashboard application, built with Node.j
 
 ```
 backend/
-├── node_modules/
 ├── src/
 │   ├── config/           # Configuration files
-│   │   ├── cloudinary.js # Cloudinary configuration
-│   │   └── db.js         # Database connection
+│   │   └── database.js   # Database connection
 │   ├── controllers/      # Route controllers
-│   │   ├── authController.js
-│   │   ├── cloudinaryController.js
-│   │   └── userController.js
+│   │   ├── authController.js # Logic for user authentication
+│   │   └── userController.js # Logic for user profile operations
 │   ├── middleware/       # Custom middleware
-│   │   ├── auth.js       # Authentication middleware
-│   │   └── errorHandler.js
+│   │   └── errorHandler.js # Global Error Handling
 │   ├── models/           # Database models
-│   │   └── User.js
+│   │   └── User.js   # Mongoose User schema
 │   ├── routes/           # Route definitions
-│   │   ├── auth.routes.js
-│   │   ├── cloudinary.routes.js
-│   │   └── user.routes.js
-│   └── utils/            # Utility functions
-│       └── errorResponse.js
+│   │   ├── auth.js  # Authentication routes
+|   |   ├── cloudinary.js # Cloudinary configuration
+│   │   ├── pdf.js    # PDF generation routes
+│   │   └── user.js  # User profile routes
 ├── .env.example          # Example environment variables
-├── .gitignore
+├── package-lock.json
 ├── package.json
+├── README.md
 └── server.js             # Application entry point
 ```
 

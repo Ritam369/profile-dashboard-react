@@ -43,8 +43,10 @@ frontend/
 │   └── index.js
 ├── .env.example
 ├── package.json
+├── package-lock.json
 ├── postcss.config.js
 └── tailwind.config.js
+└── README.md
 ```
 
 
@@ -69,6 +71,7 @@ backend/
 │   │   └── user.js
 ├── .env.example
 ├── package.json
+├── package-lock.json
 ├── README.md
 └── server.js
 ```
